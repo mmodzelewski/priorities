@@ -1,7 +1,7 @@
 {
   "productName": "priorities",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "dev.modzelewski.priorities",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",

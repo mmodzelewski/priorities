@@ -1,3 +1,3 @@
-package com.tauri.priorities
+package dev.modzelewski.priorities
 
 class MainActivity : TauriActivity()
