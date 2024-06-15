@@ -1,0 +1,12 @@
+{
+    "$schema": "../gen/schemas/mobile-schema.json",
+    "identifier": "main-capabilities",
+    "windows": [
+        "main"
+    ],
+    "permissions": [
+        "sql:allow-load",
+        "sql:allow-select",
+        "sql:allow-execute"
+    ]
+}
