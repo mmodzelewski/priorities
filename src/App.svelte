@@ -15,7 +15,8 @@
         priorities = await loadPriorities();
     });
 
-    async function addPriority() {
+    async function addPriority(event: Event) {
+        event.preventDefault();
         if (!newPriorityTitle) {
             return;
         }
@@ -43,10 +44,10 @@
         {/each}
     </div>
     <div>
-        <button on:click={deletAll} class="border border-red-800 p-2"
+        <button onclick={deletAll} class="border border-red-800 p-2"
             >Delete all</button
         >
-        <form on:submit|preventDefault={addPriority}>
+        <form onsubmit={addPriority}>
             <input
                 bind:value={newPriorityTitle}
                 type="text"
