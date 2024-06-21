@@ -7,10 +7,22 @@ export interface Priority {
     createdAt: Date;
 }
 
-export async function loadPriorities(): Promise<Priority[]> {
+let priorities: readonly Priority[] = $state.frozen([]);
+loadPriorities();
+
+export function prioritiesStore() {
+    return {
+        get all() { return priorities; },
+        create: create,
+        complete: complete,
+        deleteAll: deleteAll,
+    };
+}
+
+async function loadPriorities(): Promise<void> {
     const rows = await storage.select("SELECT * FROM priorities");
     if (Array.isArray(rows)) {
-        return rows.map((row: any) => ({
+        priorities = rows.map((row: any) => ({
             id: row.id,
             title: row.title,
             createdAt: new Date(row.created_at),
@@ -19,29 +31,29 @@ export async function loadPriorities(): Promise<Priority[]> {
                 : null,
         }));
     }
-    return [];
 }
 
-export async function createPriority(title: string): Promise<Priority> {
+async function create(title: string): Promise<void> {
     const currentTime = new Date();
-    const result = await storage.execute(
+    await storage.execute(
         "INSERT INTO priorities (title, created_at) VALUES ($1, $2)",
         [title, currentTime],
     );
-
-    return {
-        id: result.lastInsertId,
-        title: title,
-        createdAt: currentTime,
-        completedAt: null,
-    };
+    await loadPriorities();
 }
 
-export async function completePriority(priority: Priority): Promise<void> {
+async function complete(priority: Priority): Promise<void> {
     const currentTime = new Date();
     await storage.execute(
         "UPDATE priorities SET completed_at = $1 WHERE id = $2",
         [currentTime, priority.id],
     );
-    priority.completedAt = currentTime;
+    loadPriorities();
 }
+
+async function deleteAll(): Promise<void> {
+    await storage.execute("DELETE FROM priorities");
+    await loadPriorities();
+}
+
+

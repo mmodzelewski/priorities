@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { completePriority, type Priority } from "../lib/priorities";
+    import { prioritiesStore, type Priority } from "../lib/priorities.svelte";
 
-    export let priority: Priority;
+    let { priority }: { priority: Priority } = $props();
+    let priorities = prioritiesStore();
 
     async function complete() {
-        completePriority(priority);
+        priorities.complete(priority);
     }
 </script>
 
@@ -15,5 +16,5 @@
             <span>:checkmark:</span>
         {/if}
     </div>
-    <button on:click={complete}>Complete</button>
+    <button onclick={complete}>Complete</button>
 </div>

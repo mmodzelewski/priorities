@@ -1,19 +1,9 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { storage } from "./lib/storage";
-    import {
-        createPriority,
-        loadPriorities,
-        type Priority as PriorityType,
-    } from "./lib/priorities";
     import Priority from "./components/Priority.svelte";
+    import { prioritiesStore } from "./lib/priorities.svelte";
 
-    let priorities: PriorityType[] = [];
-    let newPriorityTitle = "";
-
-    onMount(async () => {
-        priorities = await loadPriorities();
-    });
+    let priorities = prioritiesStore();
+    let newPriorityTitle = $state("");
 
     async function addPriority(event: Event) {
         event.preventDefault();
@@ -24,22 +14,20 @@
             return;
         }
 
-        const newPriority = await createPriority(newPriorityTitle);
-
-        priorities = [...priorities, newPriority];
+        await priorities.create(newPriorityTitle);
         newPriorityTitle = "";
     }
 
     async function deletAll() {
-        await storage.execute("DELETE FROM priorities");
-        priorities = [];
+        // todo: remove this
+        priorities.deleteAll();
     }
 </script>
 
 <main class="container flex flex-col h-full">
     <h1 class="text-xl">Priorities</h1>
     <div class="grow overflow-auto">
-        {#each priorities as priority}
+        {#each priorities.all as priority (priority.id)}
             <Priority {priority} />
         {/each}
     </div>
